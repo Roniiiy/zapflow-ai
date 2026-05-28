@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { supabase } from "../lib/supabase";
 
 const menuItems = [
   { label: "Dashboard", href: "/dashboard" },
@@ -18,8 +19,8 @@ export default function Sidebar() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  function logout() {
-    document.cookie = "zapflow_auth=; path=/; max-age=0";
+  async function logout() {
+    await supabase.auth.signOut();
     router.push("/login");
   }
 
@@ -39,9 +40,10 @@ export default function Sidebar() {
         style={{ width: "260px" }}
       >
         <div>
-          <h1 className="text-3xl font-bold text-cyan-300">ZapFlow AI</h1>
+          <h1 className="text-3xl font-bold text-cyan-300">Vokre</h1>
+
           <p className="mt-2 text-sm text-slate-400">
-            Funcionário IA para WhatsApp
+            Central de vendas com IA
           </p>
         </div>
 
@@ -59,9 +61,12 @@ export default function Sidebar() {
         </nav>
 
         <div className="mt-auto rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-4">
-          <p className="text-sm font-semibold text-cyan-300">WhatsApp ativo</p>
+          <p className="text-sm font-semibold text-cyan-300">
+            IA configurada
+          </p>
+
           <p className="mt-2 text-xs text-slate-400">
-            Número conectado e recebendo mensagens.
+            Atendimento, CRM e automações conectados.
           </p>
         </div>
 

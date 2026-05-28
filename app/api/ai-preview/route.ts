@@ -1,59 +1,97 @@
 import { prisma } from "../../../src/lib/prisma";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
-  const body = await request.json();
-  const userMessage = String(body.message || "").toLowerCase();
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
 
-  const settings = await prisma.companySettings.findFirst();
+    const { message } = body;
 
-  if (!settings) {
+    const settings = await prisma.companySettings.findFirst();
+
+    const companyName =
+      settings?.companyName || "Nossa empresa";
+
+    const services =
+      settings?.services || "nossos serviços";
+
+    const businessHours =
+      settings?.businessHours || "horário comercial";
+
+    const address =
+      settings?.address || "endereço não informado";
+
+    const autoMessage =
+      settings?.autoMessage ||
+      "Olá! Como podemos ajudar você hoje?";
+
+    let reply = "";
+
+    const lowerMessage = message.toLowerCase();
+
+    if (
+      lowerMessage.includes("preço") ||
+      lowerMessage.includes("valor") ||
+      lowerMessage.includes("quanto custa")
+    ) {
+      reply = `Olá! 😊
+
+Obrigado pelo contato com ${companyName}.
+
+Trabalhamos com:
+${services}
+
+Para enviarmos valores mais exatos, precisamos entender melhor sua necessidade.`;
+
+    } else if (
+      lowerMessage.includes("horário") ||
+      lowerMessage.includes("funcionamento")
+    ) {
+      reply = `Nosso horário de funcionamento é:
+
+${businessHours}`;
+
+    } else if (
+      lowerMessage.includes("endereço") ||
+      lowerMessage.includes("localização")
+    ) {
+      reply = `Estamos localizados em:
+
+${address}`;
+
+    } else if (
+      lowerMessage.includes("oi") ||
+      lowerMessage.includes("olá") ||
+      lowerMessage.includes("bom dia")
+    ) {
+      reply = autoMessage;
+
+    } else {
+      reply = `Olá! 😊
+
+Recebemos sua mensagem:
+
+"${message}"
+
+Nossa equipe da ${companyName} responderá em breve.
+
+Serviços disponíveis:
+${services}`;
+    }
+
     return NextResponse.json({
-      reply: "Configure os dados da empresa antes de usar a IA.",
+      reply,
     });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error: "Erro ao gerar resposta IA",
+      },
+      {
+        status: 500,
+      }
+    );
   }
-
-  let reply = "";
-
-  if (
-    userMessage.includes("preço") ||
-    userMessage.includes("valor") ||
-    userMessage.includes("quanto custa")
-  ) {
-    reply = `Olá! Os valores podem variar conforme o serviço desejado. Trabalhamos com: ${settings.services}. Para te ajudar melhor, me diga qual serviço você tem interesse.`;
-  } else if (
-    userMessage.includes("horário") ||
-    userMessage.includes("funcionamento") ||
-    userMessage.includes("abre")
-  ) {
-    reply = `Nosso horário de funcionamento é: ${settings.businessHours}.`;
-  } else if (
-    userMessage.includes("endereço") ||
-    userMessage.includes("localização") ||
-    userMessage.includes("onde fica")
-  ) {
-    reply = `Estamos localizados em: ${settings.address}.`;
-  } else if (
-    userMessage.includes("agendar") ||
-    userMessage.includes("marcar consulta") ||
-    userMessage.includes("marcar horário")
-  ) {
-    reply = `Claro! Posso te ajudar com o agendamento. Me informe o melhor dia e horário para você.`;
-  } else if (
-    userMessage.includes("reagendar") ||
-    userMessage.includes("remarcar") ||
-    userMessage.includes("trocar horário")
-  ) {
-    reply = `Sem problemas! Para reagendar, me envie o novo dia e horário desejado.`;
-  } else if (
-    userMessage.includes("serviços") ||
-    userMessage.includes("atendem") ||
-    userMessage.includes("fazem")
-  ) {
-    reply = `Atualmente oferecemos os seguintes serviços: ${settings.services}.`;
-  } else {
-    reply = `${settings.autoMessage}\n\nSou o assistente virtual da ${settings.companyName}. Posso ajudar com horários, endereço, serviços, agendamentos e reagendamentos.`;
-  }
-
-  return NextResponse.json({ reply });
 }

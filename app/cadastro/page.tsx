@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { supabase } from "../../src/lib/supabase";
 
 export default function CadastroPage() {
   const router = useRouter();
@@ -12,7 +13,9 @@ export default function CadastroPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleRegister(event: React.FormEvent) {
+  const [loading, setLoading] = useState(false);
+
+  async function handleRegister(event: React.FormEvent) {
     event.preventDefault();
 
     if (!name || !company || !email || !password) {
@@ -20,14 +23,34 @@ export default function CadastroPage() {
       return;
     }
 
-    document.cookie = "zapflow_auth=true; path=/";
-    router.push("/dashboard");
+    setLoading(true);
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+          company,
+        },
+      },
+    });
+
+    setLoading(false);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    alert("Conta criada com sucesso!");
+    router.push("/login");
   }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#020617] px-6 py-10 text-white">
       <div className="w-full max-w-md rounded-3xl border border-slate-800 bg-slate-950/80 p-8">
-        <p className="text-sm font-semibold text-cyan-400">ZapFlow AI</p>
+        <p className="text-sm font-semibold text-cyan-400">Vokre</p>
 
         <h1 className="mt-2 text-4xl font-bold">Criar conta</h1>
 
@@ -66,8 +89,11 @@ export default function CadastroPage() {
             className="w-full rounded-2xl border border-slate-700 bg-[#020617] px-4 py-4 outline-none focus:border-cyan-400"
           />
 
-          <button className="w-full rounded-2xl bg-cyan-400 px-6 py-4 font-semibold text-black transition hover:bg-cyan-300">
-            Criar conta
+          <button
+            disabled={loading}
+            className="w-full rounded-2xl bg-cyan-400 px-6 py-4 font-semibold text-black transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? "Criando conta..." : "Criar conta"}
           </button>
         </form>
 

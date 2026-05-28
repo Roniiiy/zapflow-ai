@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Sidebar from "../../src/components/Sidebar";
+import AuthGuard from "../../src/components/AuthGuard";
 
 type Lead = {
   id: string;
@@ -105,7 +106,7 @@ export default function CRMPage() {
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = "leads-zapflow.csv";
+    link.download = "leads-vokre.csv";
     link.click();
 
     URL.revokeObjectURL(url);
@@ -116,202 +117,202 @@ export default function CRMPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
-      <Sidebar />
+    <AuthGuard>
+      <main className="min-h-screen bg-slate-950 text-white">
+        <Sidebar />
 
-      <section className="min-h-screen p-6 pt-20 lg:ml-[260px] lg:p-8">
-        <header className="mb-8">
-          <p className="text-sm font-medium text-cyan-300">
-            Gestão de Clientes
-          </p>
+        <section className="min-h-screen p-6 pt-20 lg:ml-[260px] lg:p-8">
+          <header className="mb-8">
+            <p className="text-sm font-medium text-cyan-300">
+              Gestão de Clientes
+            </p>
 
-          <h1 className="mt-2 text-4xl font-bold lg:text-5xl">
-            CRM
-          </h1>
+            <h1 className="mt-2 text-4xl font-bold lg:text-5xl">CRM</h1>
 
-          <p className="mt-2 text-slate-400">
-            Cadastre, edite, busque, exporte e gerencie leads reais.
-          </p>
-        </header>
+            <p className="mt-2 text-slate-400">
+              Cadastre, edite, busque, exporte e gerencie leads reais.
+            </p>
+          </header>
 
-        <form
-          onSubmit={createLead}
-          className="mb-8 rounded-2xl border border-slate-800 bg-slate-900/80 p-5 lg:p-6"
-        >
-          <h2 className="mb-5 text-2xl font-semibold">Novo Lead</h2>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              placeholder="Nome do cliente"
-              className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
-            />
-
-            <input
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              required
-              placeholder="Telefone"
-              className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
-            />
-
-            <input
-              value={tag}
-              onChange={(e) => setTag(e.target.value)}
-              placeholder="Origem ou tag"
-              className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
-            />
-
-            <input
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Observações"
-              className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
-            />
-          </div>
-
-          <button className="mt-5 w-full rounded-xl bg-cyan-400 px-6 py-3 font-semibold text-slate-950 transition hover:bg-cyan-300 md:w-auto">
-            Salvar Lead
-          </button>
-        </form>
-
-        {editingLead && (
           <form
-            onSubmit={updateLead}
-            className="mb-8 rounded-2xl border border-cyan-400/30 bg-cyan-400/10 p-5 lg:p-6"
+            onSubmit={createLead}
+            className="mb-8 rounded-2xl border border-slate-800 bg-slate-900/80 p-5 lg:p-6"
           >
-            <h2 className="mb-5 text-2xl font-semibold text-cyan-300">
-              Editar Lead
-            </h2>
+            <h2 className="mb-5 text-2xl font-semibold">Novo Lead</h2>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <input
-                value={editingLead.name}
-                onChange={(e) =>
-                  setEditingLead({ ...editingLead, name: e.target.value })
-                }
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
                 placeholder="Nome do cliente"
-                className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none"
+                className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
               />
 
               <input
-                value={editingLead.phone}
-                onChange={(e) =>
-                  setEditingLead({ ...editingLead, phone: e.target.value })
-                }
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
                 placeholder="Telefone"
-                className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none"
+                className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
               />
 
               <input
-                value={editingLead.tag || ""}
-                onChange={(e) =>
-                  setEditingLead({ ...editingLead, tag: e.target.value })
-                }
+                value={tag}
+                onChange={(e) => setTag(e.target.value)}
                 placeholder="Origem ou tag"
-                className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none"
+                className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
               />
 
               <input
-                value={editingLead.notes || ""}
-                onChange={(e) =>
-                  setEditingLead({ ...editingLead, notes: e.target.value })
-                }
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
                 placeholder="Observações"
-                className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none"
+                className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-cyan-400"
               />
             </div>
 
-            <div className="mt-5 flex flex-col gap-3 md:flex-row">
-              <button className="rounded-xl bg-cyan-400 px-6 py-3 font-semibold text-slate-950">
-                Salvar Alterações
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setEditingLead(null)}
-                className="rounded-xl border border-slate-700 px-6 py-3 text-slate-300"
-              >
-                Cancelar
-              </button>
-            </div>
+            <button className="mt-5 w-full rounded-xl bg-cyan-400 px-6 py-3 font-semibold text-slate-950 transition hover:bg-cyan-300 md:w-auto">
+              Salvar Lead
+            </button>
           </form>
-        )}
 
-        <div className="mb-6 flex flex-col gap-4 md:flex-row">
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por nome, telefone, tag ou status..."
-            className="flex-1 rounded-xl border border-slate-700 bg-slate-950 px-4 py-4 outline-none focus:border-cyan-400"
-          />
-
-          <button
-            onClick={exportLeadsToCSV}
-            className="rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-5 py-3 text-sm font-semibold text-cyan-300 transition hover:bg-cyan-400/20"
-          >
-            Exportar Leads CSV
-          </button>
-        </div>
-
-        <div className="mb-4 text-sm text-slate-400">
-          Exibindo {filteredLeads.length} de {leads.length} leads.
-        </div>
-
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {filteredLeads.map((lead) => (
-            <div
-              key={lead.id}
-              className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5"
+          {editingLead && (
+            <form
+              onSubmit={updateLead}
+              className="mb-8 rounded-2xl border border-cyan-400/30 bg-cyan-400/10 p-5 lg:p-6"
             >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-xl font-semibold">{lead.name}</h2>
-                  <p className="mt-1 text-sm text-slate-400">{lead.phone}</p>
-                </div>
+              <h2 className="mb-5 text-2xl font-semibold text-cyan-300">
+                Editar Lead
+              </h2>
 
-                <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs text-cyan-300">
-                  {lead.tag}
-                </span>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <input
+                  value={editingLead.name}
+                  onChange={(e) =>
+                    setEditingLead({ ...editingLead, name: e.target.value })
+                  }
+                  placeholder="Nome do cliente"
+                  className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none"
+                />
+
+                <input
+                  value={editingLead.phone}
+                  onChange={(e) =>
+                    setEditingLead({ ...editingLead, phone: e.target.value })
+                  }
+                  placeholder="Telefone"
+                  className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none"
+                />
+
+                <input
+                  value={editingLead.tag || ""}
+                  onChange={(e) =>
+                    setEditingLead({ ...editingLead, tag: e.target.value })
+                  }
+                  placeholder="Origem ou tag"
+                  className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none"
+                />
+
+                <input
+                  value={editingLead.notes || ""}
+                  onChange={(e) =>
+                    setEditingLead({ ...editingLead, notes: e.target.value })
+                  }
+                  placeholder="Observações"
+                  className="rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 outline-none"
+                />
               </div>
 
-              <div className="mt-5">
-                <p className="text-sm text-slate-500">Status</p>
-
-                <div className="mt-2 inline-block rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-300">
-                  {lead.status}
-                </div>
-              </div>
-
-              <div className="mt-5">
-                <p className="text-sm text-slate-500">Observações</p>
-
-                <p className="mt-2 text-sm text-slate-300">
-                  {lead.notes || "Sem observações."}
-                </p>
-              </div>
-
-              <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                <button
-                  onClick={() => setEditingLead(lead)}
-                  className="flex-1 rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-sm font-semibold text-cyan-300 transition hover:bg-cyan-400/20"
-                >
-                  Editar
+              <div className="mt-5 flex flex-col gap-3 md:flex-row">
+                <button className="rounded-xl bg-cyan-400 px-6 py-3 font-semibold text-slate-950">
+                  Salvar Alterações
                 </button>
 
                 <button
-                  onClick={() => deleteLead(lead.id)}
-                  className="flex-1 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-300 transition hover:bg-red-500/20"
+                  type="button"
+                  onClick={() => setEditingLead(null)}
+                  className="rounded-xl border border-slate-700 px-6 py-3 text-slate-300"
                 >
-                  Excluir
+                  Cancelar
                 </button>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-    </main>
+            </form>
+          )}
+
+          <div className="mb-6 flex flex-col gap-4 md:flex-row">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Buscar por nome, telefone, tag ou status..."
+              className="flex-1 rounded-xl border border-slate-700 bg-slate-950 px-4 py-4 outline-none focus:border-cyan-400"
+            />
+
+            <button
+              onClick={exportLeadsToCSV}
+              className="rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-5 py-3 text-sm font-semibold text-cyan-300 transition hover:bg-cyan-400/20"
+            >
+              Exportar Leads CSV
+            </button>
+          </div>
+
+          <div className="mb-4 text-sm text-slate-400">
+            Exibindo {filteredLeads.length} de {leads.length} leads.
+          </div>
+
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {filteredLeads.map((lead) => (
+              <div
+                key={lead.id}
+                className="rounded-2xl border border-slate-800 bg-slate-900/80 p-5"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <h2 className="text-xl font-semibold">{lead.name}</h2>
+                    <p className="mt-1 text-sm text-slate-400">{lead.phone}</p>
+                  </div>
+
+                  <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs text-cyan-300">
+                    {lead.tag}
+                  </span>
+                </div>
+
+                <div className="mt-5">
+                  <p className="text-sm text-slate-500">Status</p>
+
+                  <div className="mt-2 inline-block rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-300">
+                    {lead.status}
+                  </div>
+                </div>
+
+                <div className="mt-5">
+                  <p className="text-sm text-slate-500">Observações</p>
+
+                  <p className="mt-2 text-sm text-slate-300">
+                    {lead.notes || "Sem observações."}
+                  </p>
+                </div>
+
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+                  <button
+                    onClick={() => setEditingLead(lead)}
+                    className="flex-1 rounded-xl border border-cyan-400/20 bg-cyan-400/10 px-4 py-3 text-sm font-semibold text-cyan-300 transition hover:bg-cyan-400/20"
+                  >
+                    Editar
+                  </button>
+
+                  <button
+                    onClick={() => deleteLead(lead.id)}
+                    className="flex-1 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm font-semibold text-red-300 transition hover:bg-red-500/20"
+                  >
+                    Excluir
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
+    </AuthGuard>
   );
 }

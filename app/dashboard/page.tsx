@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "../../src/components/Sidebar";
+import { supabase } from "../../src/lib/supabase";
 
 type DashboardData = {
   totalLeads: number;
@@ -12,17 +14,64 @@ type DashboardData = {
 };
 
 export default function DashboardPage() {
+  const router = useRouter();
+
   const [data, setData] = useState<DashboardData | null>(null);
 
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  async function checkAuth() {
+    try {
+      const { data } = await supabase.auth.getSession();
+
+      if (!data.session) {
+        router.push("/login");
+        return;
+      }
+
+      setCheckingAuth(false);
+    } catch (error) {
+      console.error(error);
+      router.push("/login");
+    }
+  }
+
   async function loadDashboard() {
-    const response = await fetch("/api/dashboard");
-    const result = await response.json();
-    setData(result);
+    try {
+      const response = await fetch("/api/dashboard");
+
+      if (!response.ok) {
+        console.error("Erro ao buscar dashboard");
+        return;
+      }
+
+      const text = await response.text();
+
+      if (!text) {
+        console.error("Resposta vazia da API dashboard");
+        return;
+      }
+
+      const result = JSON.parse(text);
+
+      setData(result);
+    } catch (error) {
+      console.error("Erro no loadDashboard:", error);
+    }
   }
 
   useEffect(() => {
+    checkAuth();
     loadDashboard();
   }, []);
+
+  if (checkingAuth) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#020617] text-white">
+        Verificando acesso...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#020617] text-white">
@@ -38,7 +87,7 @@ export default function DashboardPage() {
         </h1>
 
         <p className="mt-3 text-slate-400">
-          Acompanhe os principais indicadores do ZapFlow AI em tempo real.
+          Acompanhe os principais indicadores do Vokre em tempo real.
         </p>
 
         <div className="mt-10 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
@@ -119,10 +168,11 @@ export default function DashboardPage() {
             </h2>
 
             <p className="mt-4 leading-7 text-slate-300">
-              Seu SaaS já possui CRM, agenda, pipeline,
-              mensagens, automações simuladas,
-              configurações, dashboard em tempo real e
-              sistema de IA para respostas automáticas.
+              Seu SaaS já possui CRM, agenda,
+              pipeline, mensagens, automações
+              simuladas, configurações, dashboard
+              em tempo real e sistema de IA para
+              respostas automáticas.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
